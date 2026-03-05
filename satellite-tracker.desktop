@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Orbital Command
+Comment=Satellite Tracking & Monitoring System
+Exec=/home/dev/.gemini/antigravity/scratch/satellite-tracker/launch.sh
+Type=Application
+Terminal=false
+Categories=Science;Astronomy;
+Keywords=satellite;tracking;space;orbit;
+StartupNotify=true
