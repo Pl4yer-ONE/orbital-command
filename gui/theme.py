@@ -9,6 +9,7 @@ COLORS = {
     "bg_medium": "#161b22",
     "bg_light": "#21262d",
     "bg_lighter": "#30363d",
+    "bg_darker": "#0f131a",
     "border": "#30363d",
     "border_light": "#484f58",
     "text_primary": "#e6edf3",

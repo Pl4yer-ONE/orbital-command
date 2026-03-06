@@ -346,6 +346,11 @@ class WorldMapWidget(QWidget):
 
         painter.end()
 
+    @staticmethod
+    def _clamp_int(v):
+        """Clamp float to safe int32 range for Qt drawing."""
+        return max(-100000, min(100000, int(v)))
+
     def _draw_grid(self, painter):
         pen = QPen(QColor(COLORS["map_grid"]), 1, Qt.DotLine)
         painter.setPen(pen)
@@ -357,26 +362,26 @@ class WorldMapWidget(QWidget):
         for lat in range(-90 + step, 90, step):
             x1, y = self._geo_to_pixel(lat, -180)
             x2, _ = self._geo_to_pixel(lat, 180)
-            painter.drawLine(int(x1), int(y), int(x2), int(y))
+            painter.drawLine(self._clamp_int(x1), self._clamp_int(y), self._clamp_int(x2), self._clamp_int(y))
             if self.layers["labels"]:
                 painter.setPen(QColor(COLORS["text_dim"]))
-                painter.drawText(int(x1) - 28, int(y) + 4, f"{lat}°")
+                painter.drawText(self._clamp_int(x1) - 28, self._clamp_int(y) + 4, f"{lat}°")
                 painter.setPen(pen)
 
         for lon in range(-180 + step, 180, step):
             _, y1 = self._geo_to_pixel(90, lon)
             x, y2 = self._geo_to_pixel(-90, lon)
-            painter.drawLine(int(x), int(y1), int(x), int(y2))
+            painter.drawLine(self._clamp_int(x), self._clamp_int(y1), self._clamp_int(x), self._clamp_int(y2))
             if self.layers["labels"]:
                 painter.setPen(QColor(COLORS["text_dim"]))
-                painter.drawText(int(x) - 12, int(y2) + 14, f"{lon}°")
+                painter.drawText(self._clamp_int(x) - 12, self._clamp_int(y2) + 14, f"{lon}°")
                 painter.setPen(pen)
 
         # Equator highlight
         x1, y = self._geo_to_pixel(0, -180)
         x2, _ = self._geo_to_pixel(0, 180)
         painter.setPen(QPen(QColor(COLORS["accent_cyan"] + "40"), 1, Qt.DashLine))
-        painter.drawLine(int(x1), int(y), int(x2), int(y))
+        painter.drawLine(self._clamp_int(x1), self._clamp_int(y), self._clamp_int(x2), self._clamp_int(y))
 
     def _draw_continents(self, painter):
         if self.view_mode == VIEW_NIGHT:
@@ -894,6 +899,10 @@ class WorldMapWidget(QWidget):
             track_action = menu.addAction(f"🎯 Track {sat_data.get('name', '')}")
             track_action.triggered.connect(
                 lambda: self.satellite_selected.emit(self.hovered_satellite))
+                
+            compare_action = menu.addAction("➕ Add to Comparison")
+            compare_action.triggered.connect(
+                lambda: self.satellite_context_menu.emit(self.hovered_satellite, event.globalPos()))
 
         menu.exec_(event.globalPos())
 

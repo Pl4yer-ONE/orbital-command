@@ -1,0 +1,12 @@
+{
+  "latitude": 28.6139,
+  "longitude": 77.209,
+  "altitude": 216.0,
+  "location_name": "New Delhi, India",
+  "min_elevation": 10.0,
+  "prediction_hours": 48,
+  "update_interval": 1.0,
+  "tracked_satellites": [],
+  "alert_enabled": true,
+  "alert_minutes_before": 5
+}

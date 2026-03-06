@@ -241,10 +241,12 @@ class SatelliteTracker(QMainWindow):
         self.map_tabs = QTabWidget()
         self.world_map = WorldMapWidget()
         self.world_map.satellite_selected.connect(self._on_satellite_selected)
+        self.world_map.satellite_context_menu.connect(self._on_context_menu_compare)
         self.map_tabs.addTab(self.world_map, "◉ 2D MAP")
 
         self.globe_panel = Globe3DPanel()
         self.globe_panel.satellite_selected.connect(self._on_satellite_selected)
+        self.globe_panel.satellite_context_menu.connect(self._on_context_menu_compare)
         self.map_tabs.addTab(self.globe_panel, "◉ 3D GLOBE")
 
         center_splitter.addWidget(self.map_tabs)
@@ -275,6 +277,7 @@ class SatelliteTracker(QMainWindow):
         right_tabs = QTabWidget()
 
         self.dashboard = Dashboard()
+        self.dashboard.track_toggled.connect(self._on_dashboard_track_toggled)
         right_tabs.addTab(self.dashboard, "◉ Telemetry")
 
         self.analytics_panel = AnalyticsPanel()
@@ -541,6 +544,10 @@ class SatelliteTracker(QMainWindow):
             return
         self._add_to_comparison_by_id(self.selected_satellite)
         
+    def _on_context_menu_compare(self, norad_id, pos):
+        """Handle right click 'Add to Comparison' from map/globe."""
+        self._add_to_comparison_by_id(norad_id)
+        
     def _add_to_comparison_by_id(self, norad_id):
         sat = self.tle_manager.get_satellite(norad_id)
         if not sat:
@@ -566,6 +573,16 @@ class SatelliteTracker(QMainWindow):
         self.comparison_panel.add_satellite(
             norad_id, sat.name, pos, elements, doppler, link_budget)
         self.status_label.setText(f"Added {sat.name} to comparison")
+        self.timeline_panel.add_event("SELECT", f"Added {sat.name} to comparison")
+
+    def _on_dashboard_track_toggled(self, norad_id, is_tracking):
+        """Handle dashboard track button."""
+        sat = self.tle_manager.get_satellite(norad_id)
+        if sat:
+            status = "Continuous tracking enabled" if is_tracking else "Continuous tracking disabled"
+            self.status_label.setText(f"{status} for {sat.name}")
+            self.data_logger.log_event("SELECT", f"Tracking {'started' if is_tracking else 'stopped'} for {sat.name}")
+            self.timeline_panel.add_event("SELECT", status)
 
     # --- UI callbacks ---
     def _update_observer_label(self):
@@ -640,8 +657,13 @@ class SatelliteTracker(QMainWindow):
             "  Scroll — Zoom  |  Shift+Drag — Pan\n"
             "  +/- — Zoom  |  0 — Reset  |  Arrows — Pan\n\n"
             "3D GLOBE:\n"
-            "  Drag — Rotate  |  Scroll — Zoom\n"
-            "  Double-click — Auto-rotate toggle\n\n"
+            "  Drag — Rotate  |  Scroll — Smooth Zoom\n"
+            "  Arrow Keys — Rotate  |  +/- — Zoom\n"
+            "  Home — Reset View  |  Space — Auto-Rotate\n"
+            "  Click — Select Satellite  |  Esc — Deselect\n"
+            "  Double-click — Toggle Auto-Rotate\n"
+            "  Right-click — Context Menu\n"
+            "  Hover — Satellite Info + Tooltip\n\n"
             "GLOBAL:\n"
             "  F5 — Quick refresh  |  Shift+F5 — Full refresh\n"
             "  F11 — Fullscreen  |  Ctrl+Q — Quit\n"
