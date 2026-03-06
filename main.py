@@ -198,7 +198,7 @@ class SatelliteTracker(QMainWindow):
         logo.setStyleSheet(f"color: {COLORS['accent_cyan']};")
         header_layout.addWidget(logo)
 
-        version = QLabel("v3.0 — DEEP TRACKING")
+        version = QLabel("v3.1 — DEEP TRACKING")
         version.setFont(QFont("Consolas", 9))
         version.setStyleSheet(f"color: {COLORS['text_dim']};")
         header_layout.addWidget(version)
@@ -636,7 +636,7 @@ class SatelliteTracker(QMainWindow):
 
     def _show_about(self):
         QMessageBox.about(self, "Orbital Command v3",
-            "◉ ORBITAL COMMAND v3.0 — DEEP TRACKING\n"
+            "◉ ORBITAL COMMAND v3.1 — DEEP TRACKING\n"
             "Satellite Tracking & Monitoring System\n\n"
             "• 2D Map + 3D Globe with OpenGL\n"
             "• 6 map view modes (heatmap, coverage, orbit type...)\n"
