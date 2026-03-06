@@ -12,7 +12,7 @@
 
 Orbital Command is an extremely powerful, open-source Python application designed for tracking tens of thousands of Earth-orbiting satellites in real-time. Built entirely on top of PyQt5, PyOpenGL, and the Skyfield orbital dynamics library, this tool is capable of visualizing everything from the ISS down to microscopic debris in rich, high-performance interactive views.
 
-![Orbital Command 2D Map](assets/screenshot1.png)
+![Orbital Command Dashboard Focus](assets/screenshot_v3.png)
 
 ## �� Key Features
 
